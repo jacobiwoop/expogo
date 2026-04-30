@@ -1,0 +1,17 @@
+{
+  "name": "expowoop-dev-client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --dev-client"
+  },
+  "dependencies": {
+    "expo": "~54.0.33",
+    "expo-dev-client": "~6.0.21",
+    "expo-build-properties": "~1.0.10",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-track-player": "^4.1.2"
+  },
+  "private": true
+}
