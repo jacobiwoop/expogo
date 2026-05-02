@@ -1,4 +1,6 @@
 import { registerRootComponent } from 'expo';
+import TrackPlayer from 'react-native-track-player';
+import { PlaybackService } from './service';
 import { View, Text } from 'react-native';
 
 function App() {
@@ -9,4 +11,5 @@ function App() {
   );
 }
 
+TrackPlayer.registerPlaybackService(() => PlaybackService);
 registerRootComponent(App);
