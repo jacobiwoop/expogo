@@ -8,25 +8,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          package-manager-cache: false
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17' # Très important pour les nouveaux builds Android
-          distribution: 'zulu'
+          distribution: temurin
+          java-version: 17
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20' # Reste sur 20 pour l'instant, mais surveille 22/24
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Android Debug
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --clean
+
+      - name: Build Debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: expowoop-dev-client
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
