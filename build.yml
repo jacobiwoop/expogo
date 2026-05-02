@@ -31,15 +31,28 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Patch react-native-track-player (Kotlin 2.x fix)
+      - name: Patch RNTP — Kotlin 2.x compatibility
         run: |
-          FILE="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt"
-          # Ajouter import Bundle si pas déjà présent
-          grep -q "import android.os.Bundle" "$FILE" || sed -i 's/^package com.doublesymmetry.trackplayer.module/package com.doublesymmetry.trackplayer.module\nimport android.os.Bundle/' "$FILE"
-          # Remplacer les deux occurrences de Arguments.fromBundle(track.originalItem)
-          sed -i 's/Arguments\.fromBundle(track\.originalItem)/Arguments.fromBundle(track.originalItem ?: Bundle())/g' "$FILE"
-          echo "Patch appliqué :"
-          grep -n "originalItem" "$FILE"
+          MUSIC_MODULE="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt"
+          MUSIC_SERVICE="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt"
+
+          echo "=== Patching MusicModule.kt ==="
+          # Fix 1: getTrack - Arguments.fromBundle(track.originalItem)
+          sed -i 's/Arguments\.fromBundle(musicService\.tracks\[index\]\.originalItem)/Arguments.fromBundle(musicService.tracks[index].originalItem ?: Bundle())/g' "$MUSIC_MODULE"
+          # Fix 2: getActiveTrack - Arguments.fromBundle(originalItem)
+          sed -i 's/Arguments\.fromBundle(\n\s*musicService\.tracks\[musicService\.getCurrentTrackIndex()\]\.originalItem\n\s*)/Arguments.fromBundle(musicService.tracks[musicService.getCurrentTrackIndex()].originalItem ?: Bundle())/g' "$MUSIC_MODULE"
+          # Fix 2 alt: single line version
+          sed -i '/Arguments\.fromBundle(/{N; s/Arguments\.fromBundle(\n\s*musicService\.tracks\[musicService\.getCurrentTrackIndex()\]\.originalItem/Arguments.fromBundle(musicService.tracks[musicService.getCurrentTrackIndex()].originalItem ?: Bundle()/}' "$MUSIC_MODULE"
+          
+          echo "=== Patching MusicService.kt ==="
+          # Fix 3: putBundle track.originalItem
+          sed -i 's/b\.putBundle("track", tracks\[player\.currentIndex\]\.originalItem)/b.putBundle("track", tracks[player.currentIndex].originalItem ?: Bundle())/g' "$MUSIC_SERVICE"
+          # Fix 4: putBundle lastTrack
+          sed -i 's/b\.putBundle("lastTrack", tracks\[previousIndex\]\.originalItem)/b.putBundle("lastTrack", tracks[previousIndex].originalItem ?: Bundle())/g' "$MUSIC_SERVICE"
+
+          echo "=== Vérification des patches ==="
+          grep -n "originalItem" "$MUSIC_MODULE"
+          grep -n "originalItem" "$MUSIC_SERVICE"
 
       - name: Prebuild Android
         run: npx expo prebuild --platform android --clean
