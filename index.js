@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer from '@lovegaoshi/react-native-track-player';
 import { View, Text } from 'react-native';
 
 function App() {
