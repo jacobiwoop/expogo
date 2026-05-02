@@ -1,25 +1,30 @@
 {
   "expo": {
     "name": "ExpoWoop",
-    "slug": "expowoop-dev-client",
+    "slug": "expogo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "newArchEnabled": false,
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.expogo"
+    },
     "android": {
-      "package": "com.expowoop.app",
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
       "adaptiveIcon": {
-        "backgroundColor": "#000000"
-      }
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.yourname.expogo"
     },
     "plugins": [
+      "expo-dev-client",
+      "react-native-track-player",
       [
         "expo-build-properties",
         {
           "android": {
-            "kotlinVersion": "1.9.25"
+            "kotlinVersion": "2.0.21"
           }
         }
       ]
