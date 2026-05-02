@@ -6,12 +6,12 @@
     "start": "expo start --dev-client"
   },
   "dependencies": {
-    "expo": "~49.0.0",
-    "expo-dev-client": "~2.4.0",
-    "expo-build-properties": "~0.8.0",
+    "expo": "~50.0.14",
+    "expo-dev-client": "~3.3.11",
+    "expo-build-properties": "~0.11.1",
     "react": "18.2.0",
-    "react-native": "0.72.6",
-    "react-native-track-player": "4.0.1"
+    "react-native": "0.73.6",
+    "react-native-track-player": "4.1.1"
   },
   "private": true
 }
