@@ -31,15 +31,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Patch react-native-track-player (Kotlin 2.x fix)
+      - name: Patch RNTP — Kotlin 2.x compatibility
         run: |
-          FILE="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt"
-          # Ajouter import Bundle si pas déjà présent
-          grep -q "import android.os.Bundle" "$FILE" || sed -i 's/^package com.doublesymmetry.trackplayer.module/package com.doublesymmetry.trackplayer.module\nimport android.os.Bundle/' "$FILE"
-          # Remplacer les deux occurrences de Arguments.fromBundle(track.originalItem)
-          sed -i 's/Arguments\.fromBundle(track\.originalItem)/Arguments.fromBundle(track.originalItem ?: Bundle())/g' "$FILE"
-          echo "Patch appliqué :"
-          grep -n "originalItem" "$FILE"
+          RNTP_PATH="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer"
+          cp patches/rntp/MusicModule.kt "$RNTP_PATH/module/MusicModule.kt"
+          cp patches/rntp/MusicService.kt "$RNTP_PATH/service/MusicService.kt"
+          echo "✅ Patch appliqué"
 
       - name: Prebuild Android
         run: npx expo prebuild --platform android --clean
