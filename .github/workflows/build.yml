@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           package-manager-cache: false
 
       - name: Setup Java
@@ -30,6 +30,16 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Patch react-native-track-player (Kotlin 2.x fix)
+        run: |
+          FILE="node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt"
+          # Ajouter import Bundle si pas déjà présent
+          grep -q "import android.os.Bundle" "$FILE" || sed -i 's/^package com.doublesymmetry.trackplayer.module/package com.doublesymmetry.trackplayer.module\nimport android.os.Bundle/' "$FILE"
+          # Remplacer les deux occurrences de Arguments.fromBundle(track.originalItem)
+          sed -i 's/Arguments\.fromBundle(track\.originalItem)/Arguments.fromBundle(track.originalItem ?: Bundle())/g' "$FILE"
+          echo "Patch appliqué :"
+          grep -n "originalItem" "$FILE"
 
       - name: Prebuild Android
         run: npx expo prebuild --platform android --clean
