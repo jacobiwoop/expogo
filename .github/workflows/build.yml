@@ -1,4 +1,3 @@
-```yaml
 name: Build Dev Client APK
 
 on:
@@ -52,4 +51,3 @@ jobs:
           name: expowoop-dev-client
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7
-```
